@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Sparx Hax</title>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="shell-header">
+        <div class="brand">
+          <span class="brand-mark">sh</span>
+          <span class="brand-name">sparx hax</span>
+        </div>
+      </header>
+
+      <nav class="tabs">
+        <button class="tablink active" data-tab="answer">answer</button>
+        <button class="tablink" data-tab="bookwork">bookwork</button>
+        <button class="tablink" data-tab="settings">settings</button>
+      </nav>
+
+      <!-- Answer tab -->
+      <section id="answer" class="tabpanel active">
+        <div class="card">
+          <label class="field-label">solver model</label>
+          <select id="model-select" class="model-select">
+            <option value="openai/gpt-oss-120b">gpt-oss-120b (recommended)</option>
+            <option value="deepseek-r1-distill-llama-70b">deepseek r1 distill 70b</option>
+            <option value="llama-3.3-70b-versatile">llama 3.3 70b</option>
+            <option value="llama-3.1-8b-instant">llama 3.1 8b (fast)</option>
+          </select>
+          <p class="field-hint">vision readback is handled by llama-3.2-90b-vision-preview.</p>
+        </div>
+
+        <button id="solve" class="btn btn-primary">solve question</button>
+
+        <div id="status" class="status"></div>
+
+        <div id="preview" class="preview"></div>
+
+        <div id="result" class="result"></div>
+
+        <div id="debug-panel" class="debug-panel" style="display: none">
+          <div class="debug-section" id="debug-model"></div>
+          <div class="debug-section" id="debug-vision-output"></div>
+        </div>
+      </section>
+
+      <!-- Bookwork tab -->
+      <section id="bookwork" class="tabpanel"></section>
+
+      <!-- Settings tab -->
+      <section id="settings" class="tabpanel">
+        <div class="card">
+          <label class="field-label">groq api key</label>
+          <div class="input-wrap">
+            <input id="api-key" type="password" placeholder="gsk_..." />
+            <button id="saveKey" class="btn btn-small">save</button>
+          </div>
+          <p class="field-hint">get your key at console.groq.com/keys</p>
+        </div>
+      </section>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
