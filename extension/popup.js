@@ -73,6 +73,19 @@ function setStatus(msg) { statusEl.innerText = msg; }
 function setResult(msg) { resultEl.innerText = msg; }
 function setLoading(on) { solveBtn.disabled = on; }
 
+function showBoxes() {
+  statusEl.style.display = "block";
+  previewEl.style.display = "block";
+  resultEl.style.display = "block";
+}
+
+function hideBoxes() {
+  statusEl.style.display = "none";
+  previewEl.style.display = "none";
+  resultEl.style.display = "none";
+  debugPanel.style.display = "none";
+}
+
 solveBtn.addEventListener("click", async () => {
   const apiKey = document.getElementById("api-key").value.trim();
   if (!apiKey) return setResult("enter your groq api key first.");
@@ -80,6 +93,7 @@ solveBtn.addEventListener("click", async () => {
   const solverModel = modelSelect.value;
 
   setLoading(true);
+  showBoxes();
   setResult("");
   previewEl.replaceChildren();
   clearDebug();
