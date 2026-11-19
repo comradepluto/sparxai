@@ -6,8 +6,7 @@ const debugPanel = document.getElementById("debug-panel");
 const debugModel = document.getElementById("debug-model");
 const debugVision = document.getElementById("debug-vision-output");
 const modelSelect = document.getElementById("model-select");
-
-const VISION_MODEL = "meta-llama/llama-3.2-90b-vision-preview";
+const visionModelSelect = document.getElementById("vision-model-select");
 
 function setDebugModel(modelName, path) {
   debugPanel.style.display = "block";
@@ -42,10 +41,11 @@ function clearDebug() {
 }
 
 chrome.storage.local.get(
-  ["groqApiKey", "groqModel", "lastAnswer", "lastScreenshot", "currentQuestion", "lastDebugModel", "lastDebugPath", "lastDebugVision"],
+  ["groqApiKey", "groqModel", "groqVisionModel", "lastAnswer", "lastScreenshot", "currentQuestion", "lastDebugModel", "lastDebugPath", "lastDebugVision"],
   (result) => {
     if (result.groqApiKey) document.getElementById("api-key").value = result.groqApiKey;
     if (result.groqModel) modelSelect.value = result.groqModel;
+    if (result.groqVisionModel) visionModelSelect.value = result.groqVisionModel;
     if (result.lastAnswer) setResult(result.lastAnswer);
     if (result.lastScreenshot) {
       const img = document.createElement("img");
@@ -67,6 +67,61 @@ document.getElementById("saveKey").addEventListener("click", () => {
 
 modelSelect.addEventListener("change", () => {
   chrome.storage.local.set({ groqModel: modelSelect.value });
+});
+
+visionModelSelect.addEventListener("change", () => {
+  chrome.storage.local.set({ groqVisionModel: visionModelSelect.value });
+});
+
+document.getElementById("refreshModels").addEventListener("click", async () => {
+  const apiKey = document.getElementById("api-key").value.trim();
+  if (!apiKey) return setResult("enter your groq api key first.");
+  const btn = document.getElementById("refreshModels");
+  const statusEl2 = document.getElementById("modelsStatus");
+  btn.disabled = true;
+  btn.textContent = "loading...";
+  statusEl2.innerText = "fetching models...";
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/models", {
+      headers: { Authorization: `Bearer ${apiKey}` }
+    });
+    if (!response.ok) throw new Error("failed to fetch models");
+    const data = await response.json();
+    const models = (data.data || []).map(m => m.id).sort();
+    const visionModels = models.filter(m =>
+      m.includes("vision") || m.includes("scout") || m.includes("llama-3.2")
+    );
+    const textModels = models.filter(m =>
+      !m.includes("vision") && !m.includes("scout")
+    );
+
+    function fillSelect(select, options, currentValue) {
+      select.replaceChildren();
+      options.forEach(m => {
+        const o = document.createElement("option");
+        o.value = m;
+        o.textContent = m;
+        select.appendChild(o);
+      });
+      if (currentValue && options.includes(currentValue)) {
+        select.value = currentValue;
+      } else if (options.length > 0) {
+        select.value = options[0];
+      }
+    }
+
+    fillSelect(visionModelSelect, visionModels.length > 0 ? visionModels : models, visionModelSelect.value);
+    fillSelect(modelSelect, textModels.length > 0 ? textModels : models, modelSelect.value);
+
+    chrome.storage.local.set({ groqModel: modelSelect.value, groqVisionModel: visionModelSelect.value });
+    statusEl2.innerText = `loaded ${models.length} models`;
+  } catch (err) {
+    console.error(err);
+    statusEl2.innerText = "error: " + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "refresh models";
+  }
 });
 
 function setStatus(msg) { statusEl.innerText = msg; }
@@ -114,7 +169,7 @@ solveBtn.addEventListener("click", async () => {
     const visionOutput = questionText;
     const { result: calcAnswer, model: usedModel } = await solveQuestion(questionText, apiKey, solverModel);
     const answer = calcAnswer;
-    const usedPath = `${VISION_MODEL} → ${solverModel}`;
+    const usedPath = `${visionModelSelect.value} → ${solverModel}`;
 
     setDebugModel(usedModel, usedPath);
     setDebugVision(visionOutput ?? "(vision solved directly — no text relay)");
@@ -158,7 +213,7 @@ async function extractTextFromScreenshot(base64, apiKey) {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: VISION_MODEL,
+      model: visionModelSelect.value,
       max_tokens: 1024,
       messages: [{
         role: "user",
@@ -201,7 +256,7 @@ async function solveWithVision(base64, apiKey) {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: VISION_MODEL,
+      model: visionModelSelect.value,
       max_tokens: 512,
       messages: [
         {
@@ -220,7 +275,7 @@ async function solveWithVision(base64, apiKey) {
   });
   const raw = await response.text();
   const data = JSON.parse(raw);
-  const modelName = data.model || VISION_MODEL;
+  const modelName = data.model || visionModelSelect.value;
   console.log("solveWithVision model:", modelName, "| raw:", data.choices[0].message.content);
   if (!response.ok) throw new Error(data.error?.message || "Vision solver error");
   return { result: cleanAnswer(data.choices[0].message.content), model: modelName };

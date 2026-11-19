@@ -33,6 +33,14 @@
       <!-- Answer tab -->
       <section id="answer" class="tabpanel active">
         <div class="card">
+          <label class="field-label">vision model (reads screenshot)</label>
+          <div class="input-wrap">
+            <select id="vision-model-select" class="model-select">
+              <option value="llama-3.2-11b-vision-preview">llama-3.2-11b-vision-preview</option>
+              <option value="llama-3.2-90b-vision-preview">llama-3.2-90b-vision-preview</option>
+            </select>
+            <button id="refreshModels" class="btn btn-small">refresh models</button>
+          </div>
           <label class="field-label">solver model</label>
           <select id="model-select" class="model-select">
             <option value="openai/gpt-oss-120b">gpt-oss-120b (recommended)</option>
@@ -40,7 +48,7 @@
             <option value="llama-3.3-70b-versatile">llama 3.3 70b</option>
             <option value="llama-3.1-8b-instant">llama 3.1 8b (fast)</option>
           </select>
-          <p class="field-hint">vision readback is handled by llama-3.2-90b-vision-preview.</p>
+          <p id="modelsStatus" class="field-hint">click refresh models to load your available groq models</p>
         </div>
 
         <button id="solve" class="btn btn-primary">solve question</button>
