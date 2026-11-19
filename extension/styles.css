@@ -58,6 +58,17 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .brand-mark {
   width: 40px;
   height: 40px;
@@ -70,7 +81,7 @@ body {
   font-size: 11px;
   color: var(--text-muted);
   font-family: "JetBrains Mono", monospace;
-  margin-left: 6px;
+  margin-bottom: 2px;
 }
 
 .brand-name {
