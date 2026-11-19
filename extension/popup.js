@@ -210,9 +210,6 @@ function captureScreenshot() {
 
 async function extractTextFromScreenshot(base64, apiKey) {
   const visionModel = visionModelSelect.value;
-  if (!visionModel.toLowerCase().includes("vision")) {
-    throw new Error(`"${visionModel}" is not a vision model. Pick a vision model from the dropdown and click refresh models.`);
-  }
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
