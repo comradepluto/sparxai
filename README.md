@@ -47,3 +47,5 @@ this project is not affiliated with or endorsed by sparx ltd or sparx maths.
 ## license
 
 mit license - see the license file for details.
+
+(this project is a fork of https://github.com/Sparx-Hax/Sparx-Hax/ , i am not affiliated with them.)
