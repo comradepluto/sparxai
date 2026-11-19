@@ -89,10 +89,10 @@ document.getElementById("refreshModels").addEventListener("click", async () => {
     const data = await response.json();
     const models = (data.data || []).map(m => m.id).sort();
     const visionModels = models.filter(m =>
-      m.includes("vision") || m.includes("scout") || m.includes("llama-3.2")
+      m.toLowerCase().includes("vision") || m.toLowerCase().includes("scout")
     );
     const textModels = models.filter(m =>
-      !m.includes("vision") && !m.includes("scout")
+      !m.toLowerCase().includes("vision") && !m.toLowerCase().includes("scout")
     );
 
     function fillSelect(select, options, currentValue) {
@@ -209,6 +209,10 @@ function captureScreenshot() {
 }
 
 async function extractTextFromScreenshot(base64, apiKey) {
+  const visionModel = visionModelSelect.value;
+  if (!visionModel.toLowerCase().includes("vision")) {
+    throw new Error(`"${visionModel}" is not a vision model. Pick a vision model from the dropdown and click refresh models.`);
+  }
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
