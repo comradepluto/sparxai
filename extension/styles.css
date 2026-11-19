@@ -59,11 +59,18 @@ body {
 }
 
 .brand-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   object-fit: cover;
   display: block;
+}
+
+.brand-credit {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: "JetBrains Mono", monospace;
+  margin-left: 6px;
 }
 
 .brand-name {
