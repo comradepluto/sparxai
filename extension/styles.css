@@ -62,14 +62,8 @@ body {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 13px;
-  color: #fff;
-  box-shadow: 0 0 14px rgba(99, 102, 241, 0.35);
+  object-fit: cover;
+  display: block;
 }
 
 .brand-name {
